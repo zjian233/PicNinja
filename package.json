@@ -1,0 +1,22 @@
+{
+  "name": "pic-ninja",
+  "version": "1.0.0",
+  "description": "backblaze-b2 picture manage",
+  "main": "src/main.ts",
+  "scripts": {
+    "start": "tsc && electron dist/main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "zjian233",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "electron": "^28.0.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
