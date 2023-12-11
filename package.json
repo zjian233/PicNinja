@@ -2,9 +2,9 @@
   "name": "pic-ninja",
   "version": "1.0.0",
   "description": "backblaze-b2 picture manage",
-  "main": "src/main.ts",
+  "main": "src/main/main.ts",
   "scripts": {
-    "start": "tsc && electron dist/main.js",
+    "start": "tsc -p ./src/main && tsc -p ./src/renderer && electron dist/main/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "zjian233",

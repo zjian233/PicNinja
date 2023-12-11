@@ -1,0 +1,15 @@
+// tsconfig.renderer.json
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "umd",
+    "outDir": "../../dist/renderer",
+    "rootDir": ".",
+    "strict": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "moduleResolution": "node"
+  },
+  "include": ["./*.tsx"],
+  "exclude": ["../../node_modules"]
+}
