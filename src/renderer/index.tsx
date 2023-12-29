@@ -1,8 +1,10 @@
-// // src/renderer/index.tsx
-// import React from 'react';
-// import ReactDOM from 'react-dom';
-// import App from './App';
-//
-// ReactDOM.render(<App />, document.getElementById('root'));
+// src/renderer/index.tsx
+import React from 'react';
+import App from './App';
+import './index.css';
+import { createRoot } from 'react-dom/client';
 
-document.body.innerText = 'hello world';
+
+const container = document.getElementById('root') || document.body;
+const root = createRoot(container); // createRoot(container!) if you use TypeScript
+root.render(<App />);
