@@ -1,10 +1,15 @@
-import  React, {useReducer} from "react";
+import React, {useReducer, FC, ReactNode, useState} from "react";
 
 
 import StoreContext from "./StoreContext";
 
 interface IStore {
 
+}
+
+
+interface Props {
+    children: ReactNode
 }
 
 interface IAction {
@@ -14,8 +19,9 @@ interface IAction {
 
 
 const initialState: IStore = {
-
+    buckets: []
 }
+
 
 const reducer = (state: IStore, action: IAction) => {
     switch (action.type) {
@@ -27,7 +33,7 @@ const reducer = (state: IStore, action: IAction) => {
 }
 
 
-const StoreProvider = ({children }) => {
+const StoreProvider:FC<Props> = ({children }) => {
     const [state, dispatch] = useReducer(reducer, initialState)
     return (
         <StoreContext.Provider value={{state, dispatch}}>

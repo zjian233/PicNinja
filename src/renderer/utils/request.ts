@@ -1,72 +1,60 @@
 import keyConfig from "../../../keyConfig";
 
+// function mergeObject(object1, object2) {
+//     const object2 =
+//     Object.keys(object1)
+// }
+
 class Request {
 
     baseUrl: string;
 
-    constructor() {
-        this.baseUrl = 'https://api.backblazeb2.com';
+    commonConfig = {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: 'Basic' + btoa(`${keyConfig.keyId}:${keyConfig.key}`)
+        }
     }
 
-    async get(url:string = '/') {
-        const completeUrl = this.baseUrl + url;
 
-        const response = await fetch(completeUrl, {
-            method: 'GET',
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: 'Basic' + btoa(`${keyConfig.keyId}:${keyConfig.key}`)
-            }
-        })
+    constructor(baseUrl:string = 'https://api.backblazeb2.com', token?: string) {
+        this.baseUrl = baseUrl;
+        if (token) {
+            this.commonConfig.headers.Authorization = token;
+        }
+    }
 
-        // const data =[];
-        // const data = [];
-        let body = '';
+    async executeFetch(url:string, config: RequestInit = {}):Promise<unknown> {
+        const response = await fetch(url, {...this.commonConfig, ...config});
 
-        const reader = response.body?.getReader();
+        if (response.body) {
+            return await this.parseBody(response.body);
+
+        }
+        return response
+    }
+
+    async parseBody(inputStream: ReadableStream<Uint8Array>) {
+        const reader = inputStream.getReader();
+        let res = ''
         while (true) {
             const { done, value } = await reader?.read() ?? {};
             if (done) {
-                // Do something with last chunk of data then exit reader
-                // return;
                 break;
             }
-
-            body += new TextDecoder('utf-8').decode(value);
-
-            // Otherwise do something here to process current chunk
+            res += new TextDecoder('utf-8').decode(value);
         }
 
-        return body;
+        return JSON.parse(res);
 
-        // Array.prototype.concat.apply([], data)
-        // console.log('data:',  str);
+    }
 
+    async get(url:string = '/', config?: RequestInit) {
+        const completeUrl = this.baseUrl + url;
+        return  await this.executeFetch(completeUrl, config)
 
-        //
-        // if (!reader) {
-        //     return res;
-        // }
-        //
-        // const body = new ReadableStream({
-        //     start(controller) {
-        //         async function pump() {
-        //             const {done, value} = await reader?.read() || {};
-        //             if (done) {
-        //                 controller.close();
-        //                 return;
-        //             }
-        //             controller.enqueue(value);
-        //             return pump();
-        //         }
-        //
-        //         return pump();
-        //     }
-        // })
-
-        // console.log(response);
-        // return response
     }
 }
 
-export  default new Request();
+export  default Request;
