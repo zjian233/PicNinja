@@ -1,6 +1,6 @@
 import Request from "../utils/request";
 import eventEmitter from "../utils/eventEmitter";
-import {ON_UPDATE_BUCKETS} from "../constants";
+import {ON_UPDATE_BUCKETS, ON_UPDATE_FILE_LIST} from "../constants";
 
 interface IRes {
     apiUrl: string,
@@ -21,6 +21,23 @@ interface IB2ListBuckets {
     buckets: IBucket[]
 }
 
+interface IFile {
+    fileId: string,
+    fileInfo: {
+        src_last_modified_millis: string
+    },
+    fileName: string,
+    contentLength: number,
+    contentMd5: string,
+    contentSha1: string,
+    contentType: string,
+    uploadTimestamp: number,
+}
+
+interface IB2ListFiles {
+    files: IFile[]
+}
+
 class Asset {
     apiUrl:string = '';
     authorizationToken:string = '';
@@ -28,6 +45,7 @@ class Asset {
     accountId: string = '';
     request:Request | null =  null;
     buckets:Array<Partial<IBucket>> = [];
+    fileList: IFile[] = [];
 
     async init() {
         const request = new Request()
@@ -47,14 +65,19 @@ class Asset {
         const query = new URLSearchParams();
         query.append('accountId', this.accountId);
         const res = await this.request.get('/b2api/v2/b2_list_buckets?' + query.toString() , {}) as IB2ListBuckets
-        // useStore();
-        // const [state, dispatch] = useStore();
-        // 初始化store
-        // const [state, dispatch] = useStore();
-        // console.log('state, ', state, dispatch);
-        console.log('res', res);
         this.buckets = res.buckets.map(bucket => ({bucketId: bucket.bucketId, bucketName: bucket.bucketName, }))
-        eventEmitter.emit(ON_UPDATE_BUCKETS);
+        eventEmitter.emit(ON_UPDATE_BUCKETS, this.buckets);
+    }
+
+    async getB2ListFileNames(bucketId:string) {
+        if (!this.request) {
+            return;
+        }
+        const query = new URLSearchParams();
+        query.append('bucketId', bucketId);
+        const res = await this.request.get('/b2api/v2/b2_list_file_names?' + query.toString() , {}) as IB2ListFiles
+        this.fileList = res.files
+        eventEmitter.emit(ON_UPDATE_FILE_LIST, this.fileList);
     }
 }
 
